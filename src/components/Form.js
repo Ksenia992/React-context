@@ -1,23 +1,38 @@
 import * as React from 'react';
-import { Formik, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import Box from "@mui/material/Box";
 import { Checkbox, FormControlLabel, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import * as Yup from "yup"
+// import { useHistory } from 'react-router-dom'
+// import { Link, withRouter } from "react-router-dom";
 
 
-const Form = (key, value) => {
+const Form = () => {
+    // const history = useHistory()
     const formik = useFormik({
         initialValues: {
+            name: "",
             email: "",
             password: "",
             confirmPassword: "",
             isAgreeToPrivacy: false
         },
         validationSchema: Yup.object({
+            name: Yup
+                .string()
+                .max(12)
+                .matches(/^[aA-zZ\s]+$/, 'Enter valid name')
+                .required("Required"),
             email: Yup.string()
                 .email("The e-mail address is invalid.")
                 .required("Required"),
+            phone: Yup.number()
+                .typeError("Enter valid number")
+                .positive("A phone number can't start with a minus")
+                .integer("A phone number can't include a decimal point")
+                .min(8)
+                .required('Required'),
             password: Yup.string().required("Required").test(
                 "regex",
                 "Password must be min 8 characters, and have 1 Special Character, 1 Uppercase, 1 Number and 1 Lowercase",
@@ -34,8 +49,9 @@ const Form = (key, value) => {
                 .oneOf([Yup.ref("password"), null], "Passwords must match"),
             isAgreeToPrivacy: Yup.boolean().oneOf([true], "You must accept Privacy Policy")
         }),
-        onSubmit: (values, { resetForm }) => {
-            localStorage.setItem("token", JSON.stringify(values))
+        onSubmit: (values) => {
+            localStorage.setItem("userData", JSON.stringify(values))
+            // history.push('/profile');
         },
     })
     return (
@@ -45,8 +61,22 @@ const Form = (key, value) => {
                         justifyContent: 'space-between',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        height: '40vh'
+                        height: '70vh'
                     }}>
+                        <Box>
+                            <TextField
+                                name="name"
+                                id="name"
+                                label='Enter your name'
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.name}
+                                fullWidth
+                            />
+                            {formik.touched.name && formik.errors.name ? (
+                                <div className="error">{formik.errors.name}</div>
+                            ) : null}
+                        </Box>
                         <Box>
                             <TextField
                                 id="email"
@@ -59,6 +89,20 @@ const Form = (key, value) => {
                             />
                             {formik.touched.email && formik.errors.email ? (
                                 <div className="error">{formik.errors.email}</div>
+                            ) : null}
+                        </Box>
+                        <Box>
+                            <TextField
+                                name="phone"
+                                id="phone"
+                                label='Enter your phone'
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.phone}
+                                fullWidth
+                            />
+                            {formik.touched.phone && formik.errors.phone ? (
+                                <div className="error">{formik.errors.phone}</div>
                             ) : null}
                         </Box>
                         <Box>
@@ -108,9 +152,11 @@ const Form = (key, value) => {
                                 <div className="error">{formik.errors.isAgreeToPrivacy}</div>
                             ) : null}
                         </Box>
+                        {/*<Link to="/profile/">*/}
                         <Button color='primary' type='submit' variant="contained">
                            Sign up
                         </Button>
+                        {/*</Link>*/}
                     </Box>
                 </form>
     )

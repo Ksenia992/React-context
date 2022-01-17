@@ -15,27 +15,15 @@ const pages = [
         link: '/profile'
 }
 ];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const NavBar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
-    const deleteToken = () => localStorage.removeItem("token")
+    const deleteData = () => localStorage.removeItem("userData")
 
     return (
         <AppBar style={{ background: '#A633FF' }} position="static">
@@ -53,7 +41,7 @@ const NavBar = () => {
                                 </Link>
                         ))}
                     </Box>
-                    <Button onClick={deleteToken} variant="contained" color="error"> Sign Out
+                    <Button onClick={deleteData} variant="contained" color="error"> Clear data
                     </Button>
                 </Toolbar>
             </Container>
